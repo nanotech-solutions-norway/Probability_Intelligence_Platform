@@ -1,0 +1,118 @@
+openapi: 3.0.3
+info:
+  title: Atlas Probability Intelligence Platform API v1 Patch
+  version: 1.0.0
+  description: Phase 1 read-only OpenAPI patch for PIP probability endpoints. No write, bookmaker execution, or real-money betting endpoint is included.
+servers:
+  - url: https://www.atlas-ai.no
+    description: Production domain placeholder. Keep PIP disabled in FEA until endpoint is validated.
+paths:
+  /api/v1/pip/health:
+    get:
+      operationId: getPipHealth
+      summary: Read PIP health status
+      security:
+        - PipApiKeyAuth: []
+      responses:
+        '200':
+          description: PIP health status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PipHealthResponse'
+  /api/v1/probability/football/fixture/{fixture_id}:
+    get:
+      operationId: getFootballFixtureProbability
+      summary: Get PIP probability intelligence for a football fixture
+      description: Returns display-only probability intelligence. This endpoint must not place bets, execute orders, expose write tokens, or create bookmaker account activity.
+      security:
+        - PipApiKeyAuth: []
+      parameters:
+        - name: fixture_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+        - name: market
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [1X2, OVER_UNDER, BTTS, ASIAN_HANDICAP]
+            default: 1X2
+      responses:
+        '200':
+          description: PIP probability response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PipProbabilityResponse'
+        '401':
+          description: Missing or invalid server-side API key.
+        '429':
+          description: Rate limited.
+        '500':
+          description: Internal PIP error.
+components:
+  securitySchemes:
+    PipApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-PIP-API-Key
+  schemas:
+    PipHealthResponse:
+      type: object
+      additionalProperties: false
+      required: [status, platform, platform_version, mode]
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded]
+        platform:
+          type: string
+          const: atlas_probability_intelligence_platform
+        platform_version:
+          type: string
+        mode:
+          type: string
+          enum: [read_only, mock]
+    PipProbabilityResponse:
+      type: object
+      additionalProperties: false
+      required: [status, platform, platform_version, fixture_id, sport, market, model_version, data_timestamp, selection_probabilities, compliance_mode, execution_allowed, audit]
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded]
+        platform:
+          type: string
+          const: atlas_probability_intelligence_platform
+        platform_version:
+          type: string
+        fixture_id:
+          type: integer
+          minimum: 1
+        sport:
+          type: string
+          enum: [football]
+        market:
+          type: string
+          enum: [1X2, OVER_UNDER, BTTS, ASIAN_HANDICAP]
+        model_version:
+          type: string
+        data_timestamp:
+          type: string
+          format: date-time
+        selection_probabilities:
+          type: array
+          items:
+            type: object
+        compliance_mode:
+          type: string
+          const: display_only
+        execution_allowed:
+          type: boolean
+          const: false
+        audit:
+          type: object
