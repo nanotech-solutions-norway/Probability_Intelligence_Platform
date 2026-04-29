@@ -1,0 +1,54 @@
+{
+  "status": "ok",
+  "platform": "atlas_probability_intelligence_platform",
+  "platform_version": "1.0.0",
+  "fixture_id": 982331,
+  "sport": "football",
+  "market": "1X2",
+  "model_version": "pip-football-v1.0.0-mock",
+  "data_timestamp": "2026-04-29T14:00:00+02:00",
+  "selection_probabilities": [
+    {
+      "selection": "home",
+      "model_probability": 0.548,
+      "bookmaker_no_vig_probability": 0.502,
+      "fair_odds": 1.82,
+      "best_available_odds": 2.05,
+      "expected_value": 0.123,
+      "confidence_score": 0.71,
+      "recommendation": "WATCHLIST"
+    },
+    {
+      "selection": "draw",
+      "model_probability": 0.247,
+      "bookmaker_no_vig_probability": 0.261,
+      "fair_odds": 4.05,
+      "best_available_odds": 3.8,
+      "expected_value": -0.061,
+      "confidence_score": 0.55,
+      "recommendation": "NO_BET"
+    },
+    {
+      "selection": "away",
+      "model_probability": 0.205,
+      "bookmaker_no_vig_probability": 0.237,
+      "fair_odds": 4.88,
+      "best_available_odds": 4.4,
+      "expected_value": -0.098,
+      "confidence_score": 0.51,
+      "recommendation": "NO_BET"
+    }
+  ],
+  "compliance_mode": "display_only",
+  "execution_allowed": false,
+  "audit": {
+    "calibration_version": "mock-calibration-v1",
+    "feature_version": "mock-feature-set-v1",
+    "recommendation_policy_version": "pip-policy-v1",
+    "source": "mock"
+  },
+  "extensions": {
+    "contract_phase": "phase_1_foundation",
+    "integration_mode": "mock_read_only"
+  }
+}
