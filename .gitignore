@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.env
+.env.*.local
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Runtime/log artifacts
+logs/
+*.log
+exports/
+archive/
+
+# Secrets and provider material
+*.pem
+*.key
+secrets/
+provider_credentials.json
+
+# Model artifacts are intentionally excluded in Phase 1
+models/
+artifacts/
