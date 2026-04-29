@@ -1,0 +1,24 @@
+name: PIP Phase 2 Internal API Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  phase2-internal-api-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run PIP unittest suite
+        run: python -m unittest discover -s tests
+      - name: Validate mock probability contract
+        run: python tools/contract_validator.py examples/mock_pip_probability_response.json
+      - name: Validate Phase 2 endpoint static contract
+        run: python tools/phase2_endpoint_contract_check.py
