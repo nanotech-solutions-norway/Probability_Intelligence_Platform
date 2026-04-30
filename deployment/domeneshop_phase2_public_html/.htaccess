@@ -1,0 +1,12 @@
+# Optional Apache/Domeneshop routing for PIP Phase 2 internal API.
+# The PHP endpoint guards still enforce GET-only behavior.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# Pretty route:
+# /api/v1/probability/football/fixture/982331?market=1X2
+RewriteRule ^api/v1/probability/football/fixture/([0-9]+)/?$ api/v1/probability/football/fixture.php?fixture_id=$1 [QSA,L]
+</IfModule>
