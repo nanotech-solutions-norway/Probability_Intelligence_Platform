@@ -1,0 +1,2 @@
+# Deny direct browser access to PIP server-side configuration.
+Require all denied
