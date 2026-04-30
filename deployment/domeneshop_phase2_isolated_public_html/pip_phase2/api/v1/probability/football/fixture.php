@@ -12,8 +12,8 @@
  * https://www.atlas-ai.no/pip_phase2/api/v1/probability/football/fixture.php?fixture_id=982331&market=1X2
  */
 
-require_once __DIR__ . '/../../../../pip_api/includes/response_helpers.php';
-require_once __DIR__ . '/../../../../pip_api/includes/auth.php';
+require_once __DIR__ . '/../../../../../pip_api/includes/response_helpers.php';
+require_once __DIR__ . '/../../../../../pip_api/includes/auth.php';
 
 pip_allow_methods(['GET']);
 pip_require_api_key();
