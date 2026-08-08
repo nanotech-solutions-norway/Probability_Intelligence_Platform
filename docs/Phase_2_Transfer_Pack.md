@@ -6,6 +6,18 @@ Atlas Probability Intelligence Platform v1.0 (`PIP`) is a separate synchronized 
 
 FEA remains the football-specific product/interface layer and must remain independently operable before, during, and after PIP integration.
 
+## Superseding process-progress governance — 21:29, 08.08.2026
+
+This transfer pack remains historical Phase 2 context, but all continuation work must apply the current canonical reporting rule in `PROCESS_PROGRESS_REPORTING_STANDARD.md` and the repository root `AGENTS.md`.
+
+After every discrete process or major work step, include:
+
+```text
+Process status: [██████░░░░] 60% — <brief status>
+```
+
+The percentage is cumulative and evidence-weighted against the active approved completion target. Failed, blocked, or unverified work does not increase progress. Scope changes require explicit recalculation. A standalone `Status` command may still provide the expanded completed/ongoing/remaining summary. The percentage never authorizes real-money betting, auto-betting, bookmaker execution, public write endpoints, deployment, provider mutation, or any other safety-sensitive action.
+
 ## Current repository
 
 ```text
