@@ -21,4 +21,4 @@ jobs:
         run: |
           python -c "import hashlib,json,os,pathlib; p=pathlib.Path('contracts/fea_pip_shadow_contract_v2.schema.json'); assert hashlib.sha256(p.read_bytes()).hexdigest()==os.environ['FEA_PIP_CONTRACT_SHA256']; d=json.loads(p.read_text()); s=d['properties']['safety']['properties']; assert s['execution_allowed']['const'] is False; assert s['recommendation_release_allowed']['const'] is False; assert s['bookmaker_execution_enabled']['const'] is False; assert d['allOf'][0]['else']['properties']['probabilities']['maxItems']==0; print('shared-contract-integrity-ok')"
       - name: Run R0-specific unit tests
-        run: python -m unittest tests.test_phase16h_secret_scan tests.test_provider_consensus -v
+        run: python -m unittest tests.test_phase16h_secret_scan tests.test_provider_consensus tests.test_shadow_payload -v
