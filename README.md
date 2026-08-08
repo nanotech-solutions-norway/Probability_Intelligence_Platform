@@ -4,6 +4,18 @@ This repository contains **Atlas Probability Intelligence Platform v1.0** (`PIP`
 
 PIP is a separate synchronized technical system. It provides probability scoring contracts, learning-engine readiness, calibration readiness, odds-intelligence boundaries, backtesting scaffolding, model-governance controls, audit logic, and future model/provider upgrade pathways. **Football Edge Agent (`FEA`) remains the football-specific product/interface layer and must remain independently operable.**
 
+## Process progress reporting
+
+Effective 21:29, 08.08.2026 Europe/Oslo, all PIP work must follow `docs/PROCESS_PROGRESS_REPORTING_STANDARD.md` and the root `AGENTS.md`.
+
+After every discrete process or major work step, the operator-facing response must include a cumulative evidence-weighted status bar:
+
+```text
+Process status: [██████░░░░] 60% — <brief status>
+```
+
+The percentage is calculated against the approved completion target and verified evidence gates. Failed, blocked, or unverified work does not increase progress. The indicator never authorizes real-money betting, auto-betting, bookmaker execution, deployment, provider mutation, public writes, or any other action requiring a separate safety/approval gate. A standalone `Status` command may still return the expanded completed/ongoing/remaining report.
+
 ## Current operating position
 
 Phase 1 established the foundation and contract layer. Phase 2 adds a protected internal mock API layer and FEA integration-readiness workflow while preserving the existing FEA Phase 5 production posture.
@@ -80,6 +92,8 @@ PIP_USE_MOCK=false
 | Phase 2 config example | `services/pip_api/config/pip_config.example.php` |
 | Phase 2 rollout procedure | `docs/Phase_2_Internal_Mock_API_Rollout_Procedure.md` |
 | Phase 2 transfer pack | `docs/Phase_2_Transfer_Pack.md` |
+| Process progress reporting standard | `docs/PROCESS_PROGRESS_REPORTING_STANDARD.md` |
+| Process progress governance update | `docs/PROCESS_PROGRESS_GOVERNANCE_UPDATE_20260808.md` |
 | Optional phpMyAdmin SQL console scaffold | `db/phpmyadmin/optional_phase1_contract_audit_schema.sql` |
 
 ## Phase 2 endpoint surface
