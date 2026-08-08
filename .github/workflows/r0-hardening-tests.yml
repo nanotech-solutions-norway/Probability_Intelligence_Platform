@@ -1,0 +1,23 @@
+name: R0 Reconciliation Hardening
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  r0-hardening:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate proposed shared contract JSON
+        run: python -c "import json; json.load(open('contracts/fea_pip_shadow_contract_v2.schema.json', encoding='utf-8')); print('contract-json-ok')"
+      - name: Run value-aware Phase 16H scanner tests
+        run: python -m unittest tests.test_phase16h_secret_scan -v
+      - name: Preserve execution-disabled invariant in contract
+        run: python -c "import json; d=json.load(open('contracts/fea_pip_shadow_contract_v2.schema.json')); p=d['properties']['safety']['properties']; assert p['execution_allowed']['const'] is False; assert p['recommendation_release_allowed']['const'] is False; assert p['bookmaker_execution_enabled']['const'] is False; print('safety-contract-ok')"
