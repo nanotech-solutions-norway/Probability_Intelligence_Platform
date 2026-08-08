@@ -8,6 +8,8 @@ on:
 jobs:
   r0-hardening:
     runs-on: ubuntu-latest
+    env:
+      FEA_PIP_CONTRACT_SHA256: a2fa4bda60c4742ea353024f2e4d4bcd854345a1e6185d892c5a40c282958349
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -15,9 +17,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Validate proposed shared contract JSON
-        run: python -c "import json; json.load(open('contracts/fea_pip_shadow_contract_v2.schema.json', encoding='utf-8')); print('contract-json-ok')"
-      - name: Run value-aware Phase 16H scanner tests
-        run: python -m unittest tests.test_phase16h_secret_scan -v
-      - name: Preserve execution-disabled invariant in contract
-        run: python -c "import json; d=json.load(open('contracts/fea_pip_shadow_contract_v2.schema.json')); p=d['properties']['safety']['properties']; assert p['execution_allowed']['const'] is False; assert p['recommendation_release_allowed']['const'] is False; assert p['bookmaker_execution_enabled']['const'] is False; print('safety-contract-ok')"
+      - name: Validate shared contract integrity and safety
+        run: |
+          python -c "import hashlib,json,os,pathlib; p=pathlib.Path('contracts/fea_pip_shadow_contract_v2.schema.json'); assert hashlib.sha256(p.read_bytes()).hexdigest()==os.environ['FEA_PIP_CONTRACT_SHA256']; d=json.loads(p.read_text()); s=d['properties']['safety']['properties']; assert s['execution_allowed']['const'] is False; assert s['recommendation_release_allowed']['const'] is False; assert s['bookmaker_execution_enabled']['const'] is False; assert d['allOf'][0]['else']['properties']['probabilities']['maxItems']==0; print('shared-contract-integrity-ok')"
+      - name: Run R0-specific unit tests
+        run: python -m unittest tests.test_phase16h_secret_scan tests.test_provider_consensus -v
