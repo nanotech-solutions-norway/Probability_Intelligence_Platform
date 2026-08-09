@@ -66,6 +66,19 @@ class Phase2InternalApiStaticTest(unittest.TestCase):
         for marker in forbidden_secret_output:
             self.assertNotIn(marker, health)
 
+    def test_all_public_webroot_packages_disable_directory_indexing(self):
+        paths = [
+            ROOT / "services/pip_api/public/.htaccess",
+            ROOT / "deployment/domeneshop_phase2_public_html/.htaccess",
+            ROOT / "deployment/domeneshop_phase2_isolated_public_html/pip_phase2/.htaccess",
+            ROOT / "deployment/domeneshop_pip_subdomain_root/.htaccess",
+        ]
+        for path in paths:
+            self.assertTrue(path.is_file(), f"Missing web-root hardening file: {path}")
+            content = path.read_text(encoding="utf-8")
+            self.assertIn("Options -Indexes", content)
+            self.assertNotIn("Options +Indexes", content)
+
 
 if __name__ == "__main__":
     unittest.main()
