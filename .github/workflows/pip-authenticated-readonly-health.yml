@@ -1,0 +1,82 @@
+name: PIP Authenticated Read-only Health Check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pip-authenticated-readonly-health
+  cancel-in-progress: false
+
+jobs:
+  authenticated-health:
+    name: Authenticated GET health.php
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: pip-authenticated-readonly-validation
+      url: https://pip.atlas-ai.no/health.php
+    env:
+      PIP_API_KEY: ${{ secrets.PIP_API_KEY }}
+    steps:
+      - name: Validate authenticated health endpoint without capturing the body
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import sys
+          import urllib.error
+          import urllib.request
+
+          endpoint = "https://pip.atlas-ai.no/health.php"
+          api_key = os.environ.get("PIP_API_KEY", "")
+          if not api_key:
+              print("PIP_API_KEY is not configured in the protected environment.")
+              sys.exit(1)
+
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  return None
+
+          request = urllib.request.Request(
+              endpoint,
+              headers={"X-PIP-API-Key": api_key},
+              method="GET",
+          )
+          opener = urllib.request.build_opener(NoRedirect)
+
+          response = None
+          try:
+              response = opener.open(request, timeout=20)
+              status = response.status
+              reason = response.reason
+              content_type = response.headers.get_content_type()
+              content_length = response.headers.get("Content-Length", "not-provided")
+          except urllib.error.HTTPError as error:
+              response = error
+              status = error.code
+              reason = error.reason
+              content_type = error.headers.get_content_type()
+              content_length = error.headers.get("Content-Length", "not-provided")
+          finally:
+              api_key = None
+
+          try:
+              print(f"endpoint={endpoint}")
+              print("method=GET")
+              print(f"status={status} {reason}")
+              print(f"content_type={content_type}")
+              print(f"content_length={content_length}")
+              print("body_captured=false")
+              print("redirects_followed=false")
+              if status != 200:
+                  print("Authenticated health check REVIEW: expected HTTP 200.")
+                  sys.exit(1)
+              print("Authenticated health check PASS: HTTP 200.")
+          finally:
+              if response is not None:
+                  response.close()
+          PY
