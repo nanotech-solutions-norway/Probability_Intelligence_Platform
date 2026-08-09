@@ -1,0 +1,4 @@
+# PIP subdomain web-root hardening.
+# Keep directory contents private even when no index document is deployed.
+
+Options -Indexes

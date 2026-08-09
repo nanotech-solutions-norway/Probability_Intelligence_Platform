@@ -31,6 +31,7 @@ Upload the `pip_phase2` folder to:
 Final intended layout:
 
 ```text
+/public_html/pip_phase2/.htaccess
 /public_html/pip_phase2/api/v1/pip/health.php
 /public_html/pip_phase2/api/v1/probability/football/fixture.php
 /public_html/pip_phase2/pip_api/includes/response_helpers.php
@@ -39,6 +40,8 @@ Final intended layout:
 /public_html/pip_phase2/pip_api/config/pip_config.example.php
 /public_html/pip_phase2/pip_api/config/pip_config.local.php
 ```
+
+The root `.htaccess` disables Apache directory indexing. Do not deploy the isolated package without this file.
 
 ## Required config action
 

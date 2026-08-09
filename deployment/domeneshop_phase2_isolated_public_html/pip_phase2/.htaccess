@@ -1,0 +1,3 @@
+# Disable directory indexing for the isolated PIP Phase 2 web root.
+
+Options -Indexes
