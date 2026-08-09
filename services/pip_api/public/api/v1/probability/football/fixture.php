@@ -10,6 +10,10 @@
  *
  * The endpoint is display-only and read-only. It never creates bets, never
  * writes to bookmaker systems, and always returns execution_allowed=false.
+ *
+ * R0 hardening: invalid/missing fixture identifiers and unsupported mock
+ * markets are rejected. The endpoint must not silently substitute a fixture,
+ * market, or selection taxonomy that was not requested.
  */
 
 require_once __DIR__ . '/../../../../../includes/response_helpers.php';
@@ -18,24 +22,40 @@ require_once __DIR__ . '/../../../../../includes/auth.php';
 pip_allow_methods(['GET']);
 pip_require_api_key();
 
+function pip_validate_fixture_id(string $raw): int {
+    $raw = trim($raw);
+    if ($raw === '' || !ctype_digit($raw)) {
+        pip_send_error(422, 'PIP_INVALID_FIXTURE_ID', 'fixture_id must be a positive integer.');
+    }
+    $fixtureId = (int) $raw;
+    if ($fixtureId < 1) {
+        pip_send_error(422, 'PIP_INVALID_FIXTURE_ID', 'fixture_id must be a positive integer.');
+    }
+    return $fixtureId;
+}
+
 function pip_extract_fixture_id(): int {
     if (isset($_GET['fixture_id'])) {
-        return max(1, (int) $_GET['fixture_id']);
+        return pip_validate_fixture_id((string) $_GET['fixture_id']);
     }
 
     $uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
     if (preg_match('#/fixture/(\d+)#', $uri, $matches)) {
-        return max(1, (int) $matches[1]);
+        return pip_validate_fixture_id((string) $matches[1]);
     }
 
-    return 982331;
+    pip_send_error(422, 'PIP_FIXTURE_ID_REQUIRED', 'A positive fixture_id is required.');
 }
 
 function pip_normalize_market(): string {
-    $market = strtoupper((string) ($_GET['market'] ?? '1X2'));
-    $allowed = ['1X2', 'OVER_UNDER', 'BTTS', 'ASIAN_HANDICAP'];
-    if (!in_array($market, $allowed, true)) {
-        return '1X2';
+    $market = strtoupper(trim((string) ($_GET['market'] ?? '1X2')));
+
+    // The legacy Phase 2 mock has explicit response fixtures only for these
+    // markets. Reject all others rather than emitting an incorrect yes/no
+    // taxonomy for OVER_UNDER or ASIAN_HANDICAP.
+    $implemented = ['1X2', 'BTTS'];
+    if (!in_array($market, $implemented, true)) {
+        pip_send_error(422, 'PIP_UNSUPPORTED_MARKET', 'The requested market is not implemented by the Phase 2 mock endpoint.');
     }
     return $market;
 }

@@ -30,6 +30,15 @@ class Phase2InternalApiStaticTest(unittest.TestCase):
         self.assertIn("'frontend_token_exposed' => false", endpoint)
         self.assertIn("'write_endpoint_available' => false", endpoint)
 
+    def test_probability_endpoint_rejects_fabricated_inputs(self):
+        endpoint = (ROOT / "services/pip_api/public/api/v1/probability/football/fixture.php").read_text(encoding="utf-8")
+        self.assertIn("PIP_FIXTURE_ID_REQUIRED", endpoint)
+        self.assertIn("PIP_INVALID_FIXTURE_ID", endpoint)
+        self.assertIn("PIP_UNSUPPORTED_MARKET", endpoint)
+        self.assertNotIn("return 982331", endpoint)
+        self.assertIn("$implemented = ['1X2', 'BTTS'];", endpoint)
+        self.assertNotIn("$allowed = ['1X2', 'OVER_UNDER', 'BTTS', 'ASIAN_HANDICAP'];", endpoint)
+
     def test_no_disallowed_http_methods_in_phase2_api_files(self):
         paths = [
             ROOT / "services/pip_api/public/api/v1/pip/health.php",
