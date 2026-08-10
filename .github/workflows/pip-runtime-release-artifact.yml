@@ -22,14 +22,18 @@ jobs:
     name: Build non-deploying runtime bundle
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      RELEASE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_SHA }}
 
       - name: Validate deterministic release builder
         run: python -m unittest tests.test_runtime_release -v
 
       - name: Build reviewed runtime source bundle
-        run: python tools/build_runtime_release.py --git-sha "${GITHUB_SHA}" --output-dir dist/runtime-release
+        run: python tools/build_runtime_release.py --git-sha "${RELEASE_SHA}" --output-dir dist/runtime-release
 
       - name: Verify manifest and safety locks
         shell: bash
@@ -45,7 +49,7 @@ jobs:
           manifest = json.loads(manifests[0].read_text(encoding="utf-8"))
           archive = manifests[0].with_name(manifest["archive"])
           assert hashlib.sha256(archive.read_bytes()).hexdigest() == manifest["archive_sha256"]
-          assert manifest["source_git_sha"] == "${{ github.sha }}"
+          assert manifest["source_git_sha"] == "${{ env.RELEASE_SHA }}"
           assert manifest["deployment_authorized"] is False
           assert manifest["execution_allowed"] is False
           assert manifest["recommendation_release_allowed"] is False
@@ -61,7 +65,7 @@ jobs:
       - name: Upload reviewed source bundle and manifest
         uses: actions/upload-artifact@v4
         with:
-          name: pip-runtime-${{ github.sha }}
+          name: pip-runtime-${{ env.RELEASE_SHA }}
           path: dist/runtime-release/
           if-no-files-found: error
           retention-days: 30
