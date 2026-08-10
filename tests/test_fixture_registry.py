@@ -42,10 +42,10 @@ class FixtureRegistryTests(unittest.TestCase):
 
     def test_repeat_provider_registration_is_idempotent(self):
         registry = FixtureRegistry(sqlite3.connect(":memory:"))
-        first = registry.register_provider_fixture(identity("sportmonks", "19146701"))
+        first = registry.register_provider_fixture(identity("sportsdata_io", "19146701"))
         repeated = registry.register_provider_fixture(
             identity(
-                "sportmonks",
+                "sportsdata_io",
                 "19146701",
                 provider_updated_at=KICKOFF - timedelta(minutes=5),
             )
@@ -62,9 +62,9 @@ class FixtureRegistryTests(unittest.TestCase):
 
     def test_same_provider_cannot_assign_two_ids_to_one_fixture(self):
         registry = FixtureRegistry(sqlite3.connect(":memory:"))
-        registry.register_provider_fixture(identity("sportmonks", "19146701"))
+        registry.register_provider_fixture(identity("sports_game_odds", "19146701"))
         with self.assertRaises(FixtureIdentityConflict):
-            registry.register_provider_fixture(identity("sportmonks", "19146702"))
+            registry.register_provider_fixture(identity("sports_game_odds", "19146702"))
 
     def test_distant_kickoff_creates_a_distinct_fixture(self):
         registry = FixtureRegistry(sqlite3.connect(":memory:"))

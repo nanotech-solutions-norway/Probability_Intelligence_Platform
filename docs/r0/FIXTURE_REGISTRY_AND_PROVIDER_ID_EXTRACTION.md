@@ -4,7 +4,7 @@
 
 PIP owns canonical fixture identity. FEA remains a read-only consumer and must not create or infer fixture mappings.
 
-The controlled provider setup currently lists API-FOOTBALL, The Odds API, Sportmonks and StatsBomb as **candidates pending credential, licensing and coverage validation**. Their presence in configuration templates does not prove that a paid account, key, competition entitlement or live ingestion job is active.
+The controlled provider setup currently lists API Sports (API-FOOTBALL), The Odds API, SportsDataIO Soccer API, Soccerdata API, SportsGameOdds, SharpAPI and StatsBomb as **candidates pending credential, licensing and coverage validation**. Their presence in configuration templates does not prove that a paid account, key, competition entitlement or live ingestion job is active.
 
 ## Internal fixture ID
 
@@ -29,6 +29,8 @@ The reference implementation uses SQLite for deterministic local/CI validation. 
 - Use that value in later API-FOOTBALL fixture, odds, lineup and statistics calls.
 - Official reference: https://www.api-football.com/documentation-v3
 
+`api_football` is the canonical internal name. `api_sports` is accepted as an alias for the same API Sports soccer product and must not be counted as a distinct provider.
+
 ### The Odds API
 
 - List events with `GET /v4/sports/{sport}/events` or list current odds with `GET /v4/sports/{sport}/odds`.
@@ -36,14 +38,33 @@ The reference implementation uses SQLite for deterministic local/CI validation. 
 - The soccer sport key must also be retained as provider metadata; for example, the official sports catalogue currently includes `soccer_norway_eliteserien`.
 - Official reference: https://the-odds-api.com/liveapi/guides/v4/
 
-### Sportmonks Football API v3
+### SportsDataIO Soccer API
 
-- List fixtures with `GET https://api.sportmonks.com/v3/football/fixtures`.
-- Extract `data[].id` from fixture entities.
-- When processing an odds response, extract `data[].fixture_id`, not the odds row's own `id`.
-- Retrieve pre-match odds with `/v3/football/odds/pre-match/fixtures/{fixture_id}`.
-- Official fixture reference: https://docs.sportmonks.com/v3/endpoints-and-entities/endpoints/fixtures/get-all-fixtures
-- Official odds reference: https://docs.sportmonks.com/v3/endpoints-and-entities/endpoints/standard-odds-feed/pre-match-odds/get-odds-by-fixture-id
+- Use the Soccer API under `https://api.sportsdata.io/v4/soccer` with the server-side `Ocp-Apim-Subscription-Key` header.
+- Extract `GameId` from Game objects. `GameID` is also accepted because official SportsDataIO schemas use both capitalizations across related soccer feeds.
+- Retain `GlobalGameId` as optional metadata only; the provider-owned fixture identity is `GameId`.
+- Official API reference: https://sportsdata.io/developers/api-documentation/soccer
+- Official data dictionary: https://sportsdata.io/developers/data-dictionary/soccer
+
+### Soccerdata API
+
+- Use `https://api.soccerdataapi.com`; the provider documents `auth_token` authentication and requires gzip response support.
+- Extract `results[].id` from paginated match responses or `id` from a single match object.
+- Official reference: https://soccerdataapi.com/docs/
+
+### SportsGameOdds
+
+- Use the current v2 base URL `https://api.sportsgameodds.com/v2` with the server-side `x-api-key` header.
+- Retrieve events and odds from `GET /events` and extract `data[].eventID`.
+- Official reference: https://sportsgameodds.com/docs/
+- Official quick reference: https://sportsgameodds.com/docs/basics/cheat-sheet
+
+### SharpAPI
+
+- Use `https://api.sharpapi.io/api/v1` with the server-side `X-API-Key` header.
+- Extract `data[].id` from REST odds event objects. `data[].event_id` is accepted for documented streaming/delta payloads.
+- Treat SharpAPI as an odds candidate only until soccer competition, event, market, and timestamp coverage are authenticated and mapped.
+- Official reference: https://sharpapi.io/
 
 ### StatsBomb open data
 
@@ -58,8 +79,12 @@ Save an already-authorized JSON response locally without credentials or request 
 
 ```text
 python tools/extract_provider_fixture_ids.py api_football response.json
+python tools/extract_provider_fixture_ids.py api_sports response.json
 python tools/extract_provider_fixture_ids.py odds_api response.json
-python tools/extract_provider_fixture_ids.py sportmonks response.json
+python tools/extract_provider_fixture_ids.py sportsdata_io response.json
+python tools/extract_provider_fixture_ids.py soccerdata_api response.json
+python tools/extract_provider_fixture_ids.py sports_game_odds response.json
+python tools/extract_provider_fixture_ids.py sharpapi response.json
 python tools/extract_provider_fixture_ids.py statsbomb response.json
 ```
 

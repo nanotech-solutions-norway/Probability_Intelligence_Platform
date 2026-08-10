@@ -11,7 +11,19 @@ from pip_core.provider_fixture_ids import extract_provider_fixture_ids
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("provider", choices=("api_football", "odds_api", "sportmonks", "statsbomb"))
+    parser.add_argument(
+        "provider",
+        choices=(
+            "api_football",
+            "api_sports",
+            "odds_api",
+            "sportsdata_io",
+            "soccerdata_api",
+            "sports_game_odds",
+            "sharpapi",
+            "statsbomb",
+        ),
+    )
     parser.add_argument("response", type=Path, help="local provider JSON response")
     args = parser.parse_args()
     document = json.loads(args.response.read_text(encoding="utf-8-sig"))
