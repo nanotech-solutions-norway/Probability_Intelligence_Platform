@@ -16,7 +16,7 @@ The builder emits only the source SHA, archive hash, file count, artifact paths,
 
 ## Protected GitHub build
 
-Run `PIP Reproducible Runtime Release Artifact` with `workflow_dispatch` on the reviewed ref. The workflow:
+The workflow runs for relevant pull-request changes. After merge, it can also be run with `workflow_dispatch` on a reviewed ref. The workflow:
 
 1. checks out the exact Git commit;
 2. proves the bundle is byte-for-byte deterministic;

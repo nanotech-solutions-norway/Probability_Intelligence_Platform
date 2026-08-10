@@ -1,6 +1,13 @@
 name: PIP Reproducible Runtime Release Artifact
 
 on:
+  pull_request:
+    paths:
+      - ".github/workflows/pip-runtime-release-artifact.yml"
+      - "contracts/**"
+      - "services/pip_api/**"
+      - "tests/test_runtime_release.py"
+      - "tools/build_runtime_release.py"
   workflow_dispatch:
 
 permissions:
