@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   r0-hardening:
     runs-on: ubuntu-latest
@@ -13,9 +16,11 @@ jobs:
       R0_SYNTHETIC_PAYLOAD_SHA256: 62c1bd6a79aad6203fc68f889fbf7edceeb720a895b15d764c7d6968bbcf8817
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.11'
       - name: Validate shared contract integrity and safety
