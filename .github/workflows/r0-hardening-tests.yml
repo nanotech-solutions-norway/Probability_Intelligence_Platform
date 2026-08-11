@@ -13,7 +13,7 @@ jobs:
       R0_SYNTHETIC_PAYLOAD_SHA256: 62c1bd6a79aad6203fc68f889fbf7edceeb720a895b15d764c7d6968bbcf8817
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
